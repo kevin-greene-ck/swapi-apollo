@@ -5,6 +5,7 @@ import getResolversWithFetchers from './resolvers/index'
 import { getFetcher, getLoader } from './connectors/swapi'
 import { startExpress } from './express'
 import { startHapi } from './hapi'
+import * as hapi from 'hapi'
 
 
 const apiHost = process.env.API_HOST ? `${process.env.API_HOST}/api` : 'https://swapi.co/api'
@@ -12,11 +13,12 @@ const apiHost = process.env.API_HOST ? `${process.env.API_HOST}/api` : 'https://
 const fetcher = getFetcher(apiHost)
 
 const graphqlOptions = (schema: GraphQLSchema) => {
-    return () => ({
+    return (request: hapi.Request) => ({
         pretty: true,
         schema,
         context: {
             loader: getLoader(fetcher),
+            request
         },
     })
 }

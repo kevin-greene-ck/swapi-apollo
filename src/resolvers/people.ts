@@ -4,7 +4,9 @@ const path = '/people/'
 
 export default (fetch) => ({
   RootQuery: {
-      allPeople: (_, params) => getPageFetcher(fetch)(path, params.offset, params.limit),
+      allPeople: (_, params, context) => {
+        return getPageFetcher(fetch, context.request)(path, params.offset, params.limit)
+      },
       person: (_, params) => fetch(params.id || `${path}${params.personID}/`),
   },
   Person: {

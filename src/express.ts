@@ -16,7 +16,7 @@ export function startExpress(graphqlOptions) {
 
   app.use(bodyParser.json())
   app.use('/graphql', graphqlExpress(graphqlOptions))
-  app.use('/', graphiqlExpress({endpointURL: '/graphql'}))
+  app.use('/', graphiqlExpress({ endpointURL: '/graphql' }))
 
   app.listen(expressPort, () => {
       console.log(`Express server is listen on ${expressPort}`)

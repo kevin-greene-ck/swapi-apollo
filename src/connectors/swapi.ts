@@ -1,5 +1,7 @@
+import * as fs from 'fs'
+import * as hapi from 'hapi'
 import * as request from 'request'
-import {tracer} from '../observability/zipkin'
+import { tracer } from '../observability/zipkin'
 const DataLoader = require('dataloader')
 
 const wrapRequest = require('zipkin-instrumentation-request')
@@ -30,13 +32,15 @@ export const getLoader = (fetch: IFetcher) => {
     }, {batch: false})
 }
 
-export const getPageFetcher = (fetch: IFetcher) => (resource: string, offset?: number, limit?: number) => {
+export const getPageFetcher = (fetch: IFetcher, request?: hapi.Request) => (resource: string, offset?: number, limit?: number) => {
   let results = []
   let index = 0
   const size = limit || 0
 
   function pagination(pageURL: string) {
     return new Promise<any>((resolve, reject) => {
+        console.log('traceId: ', request.plugins.zipkin)
+        tracer.setId(request.plugins.zipkin.traceId)
       fetch(pageURL).then((data) => {
         // fast forward until offset is reached
         if (offset && results.length === 0) {

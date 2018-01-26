@@ -1,6 +1,7 @@
 import * as hapi from 'hapi'
 import {graphiqlHapi, graphqlHapi} from 'apollo-server-hapi'
 import {tracer} from './observability/zipkin'
+import './async-storage'
 
 const hapiPort = process.env.HAPI_PORT || 8000
 
@@ -19,13 +20,13 @@ export function startHapi(graphqlOptions) {
         console.log('Zipkin Enabled')
         server.register({
             register: zipkinMiddleware,
-            options: {tracer},
+            options: { tracer },
         })
     }
 
     server.register({
         options: {
-            graphqlOptions: graphqlOptions,
+            graphqlOptions,
             path: '/graphql',
         },
         register: graphqlHapi,
